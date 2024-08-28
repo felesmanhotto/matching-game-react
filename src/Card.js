@@ -1,9 +1,13 @@
-import catImage from "./assets/cat.jpg"
+import card from "./assets/card.png"
 
-function Card() {
+function Card(props) {
+
     return(
         <div>
-            <img className="card-image" src={catImage}></img>
+            <img alt="Game card" className="card-image"
+             src={props.faceUp ? props.img : card}
+             onClick={() => props.turnCard(props.id)}
+             ></img>
         </div>
     );
 }
