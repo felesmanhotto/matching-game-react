@@ -20,24 +20,20 @@ function App() {
   }, []);
 
 
-  const generateCards = React.useCallback(() => {
+  function generateCards(){
+
+    console.log("generating cards")
+    fetchData()
     const imagesArray = data.slice(6, 10).map(img => ({id: img.id, url: img.url}));
 
     const cardObjects = imagesArray.flatMap(image => [
-      {id: image.id, url: image.url, faceUp: false},
-      {id: image.id+"2", url: image.url, faceUp: false}
+      {id: image.id+"1", url: image.url, faceUp: false, matched: false},
+      {id: image.id+"2", url: image.url, faceUp: false, matched: false}
     ]);
 
     const shuffledCards = cardObjects.sort(() => Math.random() - 0.5);
     setCardsArray(shuffledCards);
-  }, [data]);
-
-
-  React.useEffect(() => {
-    if (data.length > 0) {
-      generateCards();
-    }
-  }, [data, generateCards]);
+  };
 
 
   function turnCard(id) {
@@ -48,18 +44,24 @@ function App() {
     ))
   };
 
-  
+  //Checking face up cards
   React.useEffect(() => {
-    const faceUpCards = cardsArray.filter(card => card.faceUp)
-
+    const faceUpCards = cardsArray.filter(card => card.faceUp && !card.matched)
 
     if (faceUpCards.length > 1){
       let id1 = faceUpCards[0].id
       let id2 = faceUpCards[1].id
+
       if ((id1.slice(0, -1)) !== id2.slice(0, -1)){
         setCardsArray(prevArray => prevArray.map(card => 
           card.id === id1 || card.id === id2 ?
           {...card, faceUp: false}:
+          card
+        ))
+      } else {
+        setCardsArray(prevArray => prevArray.map(card =>
+          card.id === id1 || card.id === id2 ?
+          {...card, matched: true} :
           card
         ))
       }
@@ -82,7 +84,7 @@ function App() {
         <div className="cards-container">
           {cardComponents}
         </div>
-        <button onClick={fetchData}>Generate cards</button>
+        <button onClick={generateCards}>Generate cards</button>
     </main>
   );
 }
