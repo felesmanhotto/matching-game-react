@@ -14,6 +14,7 @@ function App() {
     .then(data => setData(() => data))
   };
 
+
   React.useEffect(() => {
     fetchData()
   }, []);
@@ -24,12 +25,13 @@ function App() {
 
     const cardObjects = imagesArray.flatMap(image => [
       {id: image.id, url: image.url, faceUp: false},
-      {id: image.id, url: image.url, faceUp: false}
+      {id: image.id+"2", url: image.url, faceUp: false}
     ]);
 
     const shuffledCards = cardObjects.sort(() => Math.random() - 0.5);
     setCardsArray(shuffledCards);
   }, [data]);
+
 
   React.useEffect(() => {
     if (data.length > 0) {
@@ -44,7 +46,25 @@ function App() {
       {...card, faceUp: !card.faceUp} :
       card
     ))
-  }
+  };
+
+  
+  React.useEffect(() => {
+    const faceUpCards = cardsArray.filter(card => card.faceUp)
+
+
+    if (faceUpCards.length > 1){
+      let id1 = faceUpCards[0].id
+      let id2 = faceUpCards[1].id
+      if ((id1.slice(0, -1)) !== id2.slice(0, -1)){
+        setCardsArray(prevArray => prevArray.map(card => 
+          card.id === id1 || card.id === id2 ?
+          {...card, faceUp: false}:
+          card
+        ))
+      }
+    }
+},[cardsArray]);
 
 
   const cardComponents = cardsArray.map(card =>
