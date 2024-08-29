@@ -6,7 +6,8 @@ function App() {
  
   const [data, setData] = React.useState([]);
   const [cardsArray, setCardsArray] = React.useState([])
-
+  const [locked, setLocked] = React.useState(false)
+  const [showMenu, setShowMenu] = React.useState(true)
 
   function fetchData() {
     fetch('https://api.thecatapi.com/v1/images/search?limit=10')
@@ -23,6 +24,7 @@ function App() {
   function generateCards(){
 
     console.log("generating cards")
+
     fetchData()
     const imagesArray = data.slice(6, 10).map(img => ({id: img.id, url: img.url}));
 
@@ -37,9 +39,11 @@ function App() {
 
 
   function turnCard(id) {
+    if (locked) return;
+
     setCardsArray(prevCards => prevCards.map(card =>
       card.id === id ?
-      {...card, faceUp: !card.faceUp} :
+      {...card, faceUp: true} :
       card
     ))
   };
@@ -49,25 +53,51 @@ function App() {
     const faceUpCards = cardsArray.filter(card => card.faceUp && !card.matched)
 
     if (faceUpCards.length > 1){
+      setLocked(true)
+
       let id1 = faceUpCards[0].id
       let id2 = faceUpCards[1].id
 
       if ((id1.slice(0, -1)) !== id2.slice(0, -1)){
-        setCardsArray(prevArray => prevArray.map(card => 
-          card.id === id1 || card.id === id2 ?
-          {...card, faceUp: false}:
-          card
-        ))
+        setTimeout(()=> {
+          setCardsArray(prevArray => prevArray.map(card => 
+            card.id === id1 || card.id === id2 ?
+            {...card, faceUp: false}:
+            card
+          ))
+
+          setLocked(false)
+        }, 1000);
       } else {
         setCardsArray(prevArray => prevArray.map(card =>
           card.id === id1 || card.id === id2 ?
           {...card, matched: true} :
           card
         ))
+
+        setLocked(false)
       }
     }
 },[cardsArray]);
 
+  // Check if game is finished
+  React.useEffect(() => {
+    const allMatched = cardsArray.every(card => card.matched) 
+
+    if (allMatched && cardsArray.length > 0) {
+      console.log("All cards matched")
+      setLocked(true)
+      setTimeout(() => {
+        setCardsArray([])
+        toggleMenu()
+        setLocked(false)
+    }, 5000)
+    }
+}, [cardsArray])
+
+  function toggleMenu(){
+    setShowMenu(prevShowMenu => !prevShowMenu)
+  }
 
   const cardComponents = cardsArray.map(card =>
   <Card 
@@ -81,10 +111,22 @@ function App() {
   return (
     <main>
 
-        <div className="cards-container">
-          {cardComponents}
+      {showMenu && (
+        <div>
+          <h1>Menu</h1>
+          <button onClick={() => {generateCards(); toggleMenu(); }}>Start game</button>
         </div>
-        <button onClick={generateCards}>Generate cards</button>
+    )}
+
+      {!showMenu && (
+        <div>
+            <div className="cards-container">
+              {cardComponents}
+            </div>
+            <button onClick={locked ? undefined : toggleMenu}>Show menu</button>
+        </div>
+      )}
+      
     </main>
   );
 }
