@@ -7,16 +7,25 @@ function App() {
   const [cardsArray, setCardsArray] = React.useState([])
   const [locked, setLocked] = React.useState(false)
   const [showMenu, setShowMenu] = React.useState(true)
+  const [animal, setAnimal] = React.useState()
+  const [size, setSize] = React.useState()
 
 
   async function generateCards(){
 
-    console.log("generating cards")
 
-    const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=10');
+    if (!animal || !size) {
+      console.log("No animal/size selected")
+      return}
+
+    console.log("generating cards")
+    
+    // Wait for fetched data before generating the cardsArray
+    const response = await fetch(`https://api.the${animal}api.com/v1/images/search?limit=10`);
     const fetchedData = await response.json();
 
-    const imagesArray = fetchedData.slice(0, 4).map(img => ({id: img.id, url: img.url}));
+    const arraySize = 10 - size
+    const imagesArray = fetchedData.slice(0, arraySize).map(img => ({id: img.id, url: img.url}));
 
     const cardObjects = imagesArray.flatMap(image => [
       {id: image.id+"1", url: image.url, faceUp: false, matched: false},
@@ -88,15 +97,35 @@ function App() {
       setLocked(true)
       setTimeout(() => {
         setCardsArray([])
+        resetOptions()
         toggleMenu()
         setLocked(false)
     }, 5000)
     }
 }, [cardsArray])
 
+
   function toggleMenu(){
     setShowMenu(prevShowMenu => !prevShowMenu)
   }
+
+
+  function pickAnimal(animal){
+    setAnimal(animal)
+  }
+
+
+  function pickSize(size){
+    
+    setSize(size)
+  }
+
+  
+  function resetOptions() {
+    setAnimal()
+    setSize()
+  }
+
 
   const cardComponents = cardsArray.map(card =>
   <Card
@@ -114,7 +143,11 @@ function App() {
       {showMenu && (
         <div>
           <h1>Menu</h1>
-          <button onClick={() => {generateCards()}}>Start game</button>
+          <button onClick={() => {pickAnimal("dog")}}>Dogs</button>
+          <button onClick={() => {pickAnimal("cat")}}>Cats</button>
+          <button onClick={() => {pickSize(6)}}>8</button>
+          <button onClick={() => {pickSize(4)}}>12</button>
+          <button onClick={generateCards}>Start game</button>
         </div>
     )}
 
