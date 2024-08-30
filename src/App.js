@@ -4,29 +4,19 @@ import Card from "./Card.js"
 
 function App() {
  
-  const [data, setData] = React.useState([]);
   const [cardsArray, setCardsArray] = React.useState([])
   const [locked, setLocked] = React.useState(false)
   const [showMenu, setShowMenu] = React.useState(true)
 
-  function fetchData() {
-    fetch('https://api.thecatapi.com/v1/images/search?limit=10')
-    .then(response => response.json())
-    .then(data => setData(() => data))
-  };
 
-
-  React.useEffect(() => {
-    fetchData()
-  }, []);
-
-
-  function generateCards(){
+  async function generateCards(){
 
     console.log("generating cards")
 
-    fetchData()
-    const imagesArray = data.slice(6, 10).map(img => ({id: img.id, url: img.url}));
+    const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=10');
+    const fetchedData = await response.json();
+
+    const imagesArray = fetchedData.slice(0, 4).map(img => ({id: img.id, url: img.url}));
 
     const cardObjects = imagesArray.flatMap(image => [
       {id: image.id+"1", url: image.url, faceUp: false, matched: false},
@@ -35,6 +25,15 @@ function App() {
 
     const shuffledCards = cardObjects.sort(() => Math.random() - 0.5);
     setCardsArray(shuffledCards);
+
+     // Preload images
+    cardObjects.forEach(card => {
+      const img = new Image();
+      img.src = card.url;
+    });
+
+
+    toggleMenu()
   };
 
 
@@ -100,7 +99,8 @@ function App() {
   }
 
   const cardComponents = cardsArray.map(card =>
-  <Card 
+  <Card
+    key={card.id} 
     id={card.id}
     img={card.url}
     faceUp={card.faceUp}
@@ -114,7 +114,7 @@ function App() {
       {showMenu && (
         <div>
           <h1>Menu</h1>
-          <button onClick={() => {generateCards(); toggleMenu(); }}>Start game</button>
+          <button onClick={() => {generateCards()}}>Start game</button>
         </div>
     )}
 
