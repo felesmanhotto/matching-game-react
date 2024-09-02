@@ -4,31 +4,189 @@
 
 body {
   margin: 0;
-  background-color: darkgreen;
+  background-color: #191970;
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
 main {
   background-color: #F5F5F5;
-  width: 80rem;
-  height: 50rem;
+  width: 90%;
+  max-width: 62.5rem;
+  padding: 2.5rem;
   border-radius: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.div-title h1 {
+  color: #333333;
+  margin: 0;
+  margin-top: .5rem;
+  font-size: 3em;
+}
+
+.div-title small {
+  font-size: 1.2em;
+  color: #777777;
+  display: block;
+  margin-top: 5px;
+}
+
+.div-menu {
+  margin: 2.5rem 12rem 5rem 12rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.5rem;
 }
 
-.cards-container {
+.div-menu button:hover {
+  background-color: #0A00CC;
+}
+
+.div-menu button.selected {
+  background-color: #FF6F61;
+  border: 1px solid #191970;
+}
+
+.animals-menu, .sizes-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.animals-menu h3, .sizes-menu h3 {
+  margin-bottom: .5rem;
+  font-size: 1.5em;
+  color: #333333;
+}
+
+.animals-menu button, .sizes-menu button {
+  margin: 5px 5px;
+  padding: 15px 30px;
+  background-color: #0D00FF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  width: 150px;
+}
+.start-game {
+  margin-top: 2rem;
+  padding: 18px 36px;
+  background-color: #0D00FF; /* Primary Blue */
+  color: #FFFFFF; /* White Text */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  width: 200px;
+}
+
+.div-menu button.start-game:hover {
+  background-color: #0A00CC; /* Button Hover Blue */
+}
+
+.div-game {
+  margin: rem
+}
+
+.cards-container-size6 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 10rem;
-  row-gap: 3rem;
-  column-gap: 5rem;
+  grid-template-columns: repeat(4,1fr);
+  column-gap: 4rem;
+  row-gap: 1.2rem;
+  margin: 8rem 4rem;
+}
+
+.cards-container-size4 {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  column-gap: 4rem;
+  row-gap: 1.2rem;
+  margin: 2.5rem;
 }
 
 .card-image {
-  width: 9rem;
-  height: 10rem;
+  width: 10rem;
+  height: 11.2rem;
+  border: 2px solid #bdc3c7;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+.win-text {
+  font-size: 2em; 
+  font-weight: bold; 
+  color: white; 
+  background: #0D00FF;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin: 10px auto;
+  margin-bottom: 0px; 
+  display: inline-block; 
+}
+
+@media (max-width: 1000px) {
+  body {
+    background-color: #F5F5F5;
+  }
+
+  main {
+    border-radius: 0;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+  }
+}
+
+@media (max-width: 850px) {
+
+  body {
+    height: 120vh;
+  }
+
+  .cards-container-size6 {
+    grid-template-columns: repeat(3,1fr);
+    column-gap: 3.5rem;
+    row-gap: 1.1rem;
+    margin: 8rem 4rem;
+  }
+  
+  .cards-container-size4 {
+    grid-template-columns: repeat(3,1fr);
+    column-gap: 3.5rem;
+    row-gap: 1.1rem;
+    margin: 2.2rem;
+  }
+  
+}
+
+@media (max-width: 600px) {
+
+  body {
+    height: 165vh;
+    align-items: flex-start;
+  }
+
+
+  .cards-container-size6 {
+    grid-template-columns: repeat(2,1fr);
+    column-gap: 3rem;
+    row-gap: 1rem;
+    margin: 8rem 4rem;
+  }
+  
+  .cards-container-size4 {
+    grid-template-columns: repeat(2,1fr);
+    column-gap: 3rem;
+    row-gap: 1rem;
+    margin: 2rem;
+  }
 }

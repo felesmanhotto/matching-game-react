@@ -1,5 +1,6 @@
 import React from "react"
 import Card from "./Card.js"
+import Confetti from "react-confetti"
 
 
 function App() {
@@ -7,8 +8,9 @@ function App() {
   const [cardsArray, setCardsArray] = React.useState([])
   const [locked, setLocked] = React.useState(false)
   const [showMenu, setShowMenu] = React.useState(true)
-  const [animal, setAnimal] = React.useState()
+  const [animal, setAnimal] = React.useState("")
   const [size, setSize] = React.useState()
+  const [winCondition, setWinCondition] = React.useState(false)
 
 
   async function generateCards(){
@@ -93,13 +95,14 @@ function App() {
     const allMatched = cardsArray.every(card => card.matched) 
 
     if (allMatched && cardsArray.length > 0) {
-      console.log("All cards matched")
+      setWinCondition(true)
       setLocked(true)
       setTimeout(() => {
         setCardsArray([])
         resetOptions()
         toggleMenu()
         setLocked(false)
+        setWinCondition(false)
     }, 5000)
     }
 }, [cardsArray])
@@ -127,6 +130,11 @@ function App() {
   }
 
 
+  function showAlert() {
+    window.alert("Pick an animal and a size to start the game!")
+  }
+
+
   const cardComponents = cardsArray.map(card =>
   <Card
     key={card.id} 
@@ -140,26 +148,47 @@ function App() {
   return (
     <main>
 
+      <div className="div-title">
+        <h1>Matching game</h1> 
+        <small>Made with React</small>
+      </div>
+
       {showMenu && (
-        <div>
-          <h1>Menu</h1>
-          <button onClick={() => {pickAnimal("dog")}}>Dogs</button>
-          <button onClick={() => {pickAnimal("cat")}}>Cats</button>
-          <button onClick={() => {pickSize(6)}}>8</button>
-          <button onClick={() => {pickSize(4)}}>12</button>
-          <button onClick={generateCards}>Start game</button>
+        <div className="div-menu">
+          <div className="animals-menu">
+            <h3>Animals</h3>
+            <div animals-buttons-container>
+              <button onClick={() => {pickAnimal("dog")}} className={animal === "dog" ? "selected" : ""}>Dogs</button>
+              <button onClick={() => {pickAnimal("cat")}} className={animal === "cat" ? "selected" : ""}>Cats</button>
+            </div>
+          </div>
+          <div className="sizes-menu">
+            <h3>Sizes</h3>
+            <div size-buttons-container>
+              <button onClick={() => {pickSize(6)}} className={size === 6 ? "selected" : ""}>8</button>
+              <button onClick={() => {pickSize(4)}} className={size === 4 ? "selected" : ""} >12</button>
+            </div>
+          </div>
+          <button className="start-game" onClick={animal && size ? generateCards : showAlert}>Start game</button>
         </div>
     )}
 
       {!showMenu && (
-        <div>
-            <div className="cards-container">
+        <div className="div-game">
+            <div className={size === 6 ? "cards-container-size6" : "cards-container-size4"}>
               {cardComponents}
             </div>
-            <button onClick={locked ? undefined : toggleMenu}>Show menu</button>
         </div>
       )}
       
+      {winCondition && (
+        <div>
+          <h2 className="win-text">You win!</h2>
+        </div>
+      )}
+
+      {winCondition && <Confetti />}
+
     </main>
   );
 }
